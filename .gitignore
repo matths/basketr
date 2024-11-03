@@ -1,0 +1,9 @@
+npm-debug.log*
+node_modules/
+.npm
+.eslintcache
+.node_repl_history
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
