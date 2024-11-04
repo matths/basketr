@@ -18,6 +18,12 @@ Basketr is the source code repository how to create beautiful woven baskets, eit
 
 This repository provides useful starting points for the development of [3D models with OpenSCAD](#openscad-modules) using the example of **woven baskets**. As this is based on extruding 2D shapes, it also contains the source code for creating these [2D shapes with Svelte/JS and SVG](#svelte-components). If you want to learn more about this approach, you can also read this [blog article](https://matthias.dittgen.name/blog/woven-basket).
 
+If you're just interested in the STL file for printing, jump over to your favorite 3d model website.
+
+* Thingiverse: [Rectangular](https://www.thingiverse.com/thing:6819397), [Circular](https://www.thingiverse.com/thing:6819388)
+* Printables: [Rectangular](https://www.printables.com/model/1062291-rectangular-woven-basket), [Circular](https://www.printables.com/model/1062288-circular-woven-basket)
+* Makerworld: [Rectangular](https://makerworld.com/de/models/757170), [Circular](https://makerworld.com/de/models/757161)
+
 ## OpenSCAD modules
 
 Even if the 2D functions are the basis, we start here with the functions for the polygon shapes that have been converted from Svelte/Javascript into OpenSCAD modules to be extruded into the woven basket.
