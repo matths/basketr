@@ -11,21 +11,20 @@ include <point.scad>;
 include <circle.scad>;
 include <perimeters.scad>;
 
-get_segments_from_side_values = function (cornerRadius, circlePerimeter, hSide, vSide, cSide) [
-  ["top", hSide, point(cornerRadius, 0), point( 1, 0)],
-  ["top-right", cSide, point(cornerRadius+hSide, cornerRadius), 0],
-  ["right", vSide, point(2*cornerRadius+hSide, cornerRadius), point( 0, 1)],
-  ["bottom-right", cSide, point(cornerRadius+hSide, cornerRadius+vSide), 1],
-  ["bottom", hSide, point(cornerRadius+hSide, 2*cornerRadius+vSide), point(-1, 0)],
-  ["bottom-left", cSide, point(cornerRadius, cornerRadius+vSide), 2],
-  ["left", vSide, point(0, cornerRadius+vSide), point( 0,-1)],
-  ["top-left", cSide, point(cornerRadius, cornerRadius), 3],
+get_segments_from_side_values = function (cornerRadius, hSide, vSide, cSide) [
+  ["t_", hSide, point(  cornerRadius        ,                      0), point( 1, 0)],
+  ["tr", cSide, point(  cornerRadius + hSide,   cornerRadius        ), 0],
+  ["r_", vSide, point(2*cornerRadius + hSide,   cornerRadius        ), point( 0, 1)],
+  ["br", cSide, point(  cornerRadius + hSide,   cornerRadius + vSide), 1],
+  ["b_", hSide, point(  cornerRadius + hSide, 2*cornerRadius + vSide), point(-1, 0)],
+  ["bl", cSide, point(  cornerRadius        ,   cornerRadius + vSide), 2],
+  ["l_", vSide, point(                     0,   cornerRadius + vSide), point( 0,-1)],
+  ["tl", cSide, point(  cornerRadius        ,   cornerRadius        ), 3],
 ];
 
 get_segments = function (width, height, cornerRadius)
   get_segments_from_side_values(
     cornerRadius,
-    perimeter_of_circle(cornerRadius),
     width - 2 * cornerRadius,
     height - 2 * cornerRadius,
     perimeter_of_circle(cornerRadius)/4
