@@ -61,14 +61,14 @@ export const pointsAlongRoundedRect = (
   numberBetweenPoints = 0,
   bulge = 0
 ) => {
-  if (!numberOfPoints) {
-    numberOfPoints = Math.round(totalPerimeter/3);
-  }
-
   const circlePerimeter = perimeterOfCircle(cornerRadius);
   const totalPerimeter = perimeterOfRoundedRect(width, height, cornerRadius);
   const segments = getSegments(width, height, cornerRadius);
   const distances = getDistances(segments);
+
+  if (!numberOfPoints) {
+    numberOfPoints = Math.round(totalPerimeter/3);
+  }
 
   const number = numberOfPoints * (1 + numberBetweenPoints);
   const distanceBetweenPoints = totalPerimeter / number;
@@ -76,7 +76,7 @@ export const pointsAlongRoundedRect = (
   return nums(number).map((i) => {
       const n = 2 * (1 + numberBetweenPoints);
       const c = (i % n) / n * TAU;
-      const weaving = bulge * Math.cos(c).toFixed(2);
+      const weaving = bulge * Math.round(100*Math.cos(c))/100;
 
       const distanceFromStart = i * distanceBetweenPoints;
       const segmentIndex = distances.findIndex((distance) => distanceFromStart < distance);
