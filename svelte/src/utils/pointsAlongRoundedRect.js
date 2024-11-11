@@ -1,5 +1,5 @@
 import { nums, TAU } from "./math-utils";
-import { point, plus, multiply, swap, cwAngle2Point } from "./path-utils";
+import { point, plus, multiply, cwAngle2Point } from "./path-utils";
 
 const perimeterOfCircle = (radius) => TAU * radius;
 const perimeterOfRect = (width, height) => 2 * (width + height);  
@@ -29,66 +29,64 @@ const getSegments = (width, height, cornerRadius) => {
 const addUp = (prev, curr, i) => [...prev, curr + (i > 0 ? prev[i - 1] : 0)];
 
 const getDistances = (segments) =>
-  segments.map(s => s.length).reduce(addUp, [])
-;
+  segments.map(s => s.length).reduce(addUp, []);
 
-const calculateStraightSide = (segment, distanceFromSegmentStart, weaving) =>
-  plus(
-    plus(
-      segment.start,
-      multiply(segment.delta, distanceFromSegmentStart)
-    ),
-    multiply(swap(segment.delta), weaving)
-  )
-;
+const calculateStraightSide = (segment, distanceFromSegmentStart) =>
+  plus(segment.start, multiply(segment.delta, distanceFromSegmentStart));
 
-const calculateCorner = (segment, distanceFromSegmentStart, cornerRadius, circlePerimeter, weaving) => {
+const calculateCorner = (segment, distanceFromSegmentStart, cornerRadius, circlePerimeter) => {
   const angle = (segment.a + 4*distanceFromSegmentStart/circlePerimeter) * TAU/4;
-  return plus(
-    segment.start,
-    multiply(
-      cwAngle2Point(angle),
-      cornerRadius - weaving
-    )
-  );
+  return plus(segment.start, multiply(cwAngle2Point(angle), cornerRadius));
+};
+
+const calculatePoint = (segment, segmentIndex, distanceFromSegmentStart, cornerRadius, circlePerimeter) => 
+  segmentIndex%2 === 0
+    ? calculateStraightSide(segment, distanceFromSegmentStart)
+    : calculateCorner(segment, distanceFromSegmentStart, cornerRadius, circlePerimeter);
+
+const getDistanceFromSegmentStart = (distances, distanceFromStart, segmentIndex) =>
+  segmentIndex === 0
+    ? distanceFromStart
+    : distanceFromStart - distances[segmentIndex - 1];
+
+const getSegmentData = (distances, distanceFromStart) => {
+  const segmentIndex = distances.findIndex((distance) => distanceFromStart < distance);
+  const distanceFromSegmentStart = getDistanceFromSegmentStart(distances, distanceFromStart, segmentIndex);
+  return { segmentIndex, distanceFromSegmentStart };
 };
 
 export const pointsAlongRoundedRect = (
   width,
   height,
   cornerRadius,
-  numberOfPoints,
-  numberBetweenPoints = 0,
-  bulge = 0
+  numberOfPoints
 ) => {
   const circlePerimeter = perimeterOfCircle(cornerRadius);
   const totalPerimeter = perimeterOfRoundedRect(width, height, cornerRadius);
   const segments = getSegments(width, height, cornerRadius);
   const distances = getDistances(segments);
+  const distanceBetweenPoints = totalPerimeter / numberOfPoints;
 
-  if (!numberOfPoints) {
-    numberOfPoints = Math.round(totalPerimeter/3);
-  }
+  return nums(numberOfPoints).map((i) => {
+    const distanceFromStart = i * distanceBetweenPoints;
+    const { segmentIndex, distanceFromSegmentStart } = getSegmentData(distances, distanceFromStart);
+    return calculatePoint(segments[segmentIndex], segmentIndex, distanceFromSegmentStart, cornerRadius, circlePerimeter);
+  });
+};
 
-  const number = numberOfPoints * (1 + numberBetweenPoints);
-  const distanceBetweenPoints = totalPerimeter / number;
+export const segmentAlongRoundedRect = (
+  width,
+  height,
+  cornerRadius,
+  numberOfPoints
+) => {
+  const totalPerimeter = perimeterOfRoundedRect(width, height, cornerRadius);
+  const segments = getSegments(width, height, cornerRadius);
+  const distances = getDistances(segments);
+  const distanceBetweenPoints = totalPerimeter / numberOfPoints;
 
-  return nums(number).map((i) => {
-      const n = 2 * (1 + numberBetweenPoints);
-      const c = (i % n) / n * TAU;
-      const weaving = bulge * Math.round(100*Math.cos(c))/100;
-
+  return nums(numberOfPoints).map((i) => {
       const distanceFromStart = i * distanceBetweenPoints;
-      const segmentIndex = distances.findIndex((distance) => distanceFromStart < distance);
-      const segment = segments[segmentIndex];
-      const distanceFromSegmentStart = segmentIndex === 0
-        ? distanceFromStart
-        : distanceFromStart - distances[segmentIndex-1]
-      ;
-      return segmentIndex%2 === 0
-        ? calculateStraightSide(segment, distanceFromSegmentStart, segmentIndex%4 === 0 ? weaving : -weaving)
-        : calculateCorner(segment, distanceFromSegmentStart, cornerRadius, circlePerimeter, weaving)
-      ;
-    })
-  ;
+      return getSegmentData(distances, distanceFromStart).segmentIndex;
+  });
 };

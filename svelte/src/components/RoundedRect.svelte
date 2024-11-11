@@ -1,6 +1,7 @@
 <script>
-	import { offsetPath } from '../utils/offsetPath.js';
 	import { pointsAlongRoundedRect as pointsAlong } from '../utils/pointsAlongRoundedRect.js';
+	import { sineWavePath } from '../utils/sineWavePath.js';
+	import { offsetPath } from '../utils/offsetPath.js';
 
 	export let basketColor = '#ffd090';
 
@@ -19,8 +20,9 @@
 	export let showRect = 1;
 	export let showOpposite = 1;
 
-	$: ptsA = pointsAlong(width, height, radius, numberOfPoints, numberBetweenPoints, bulge / 2);
-	$: ptsB = pointsAlong(width, height, radius, numberOfPoints, numberBetweenPoints, -bulge / 2);
+	$: pts = pointsAlong(width, height, radius, numberOfPoints * (1+numberBetweenPoints));
+	$: ptsA = sineWavePath(pts, bulge/2, numberOfPoints/2);
+	$: ptsB = sineWavePath(pts,-bulge/2, numberOfPoints/2);
 	$: ptsC = pointsAlong(width, height, radius, numberOfPoints);
 
 	$: ptsAi = offsetPath(ptsA, thickness / 10);
