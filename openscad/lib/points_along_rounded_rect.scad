@@ -35,40 +35,33 @@ get_distances = function (segments)
   partial_sums(map(segments, function (s,i,l) s[1]))
 ;
 
-calculate_straight_side = function (segment, distanceFromSegmentStart, weaving)
+calculate_straight_side = function (segment, distanceFromSegmentStart)
   let(start = segment[2])
   let(delta = segment[3])
-  plus(plus(start, multiply(delta, distanceFromSegmentStart)), multiply(swap(delta), weaving))
+  plus(start, multiply(delta, distanceFromSegmentStart))
 ;
 
-calculate_corner = function (segment, distanceFromSegmentStart, cornerRadius, circlePerimeter, weaving)
+calculate_corner = function (segment, distanceFromSegmentStart, cornerRadius, circlePerimeter)
   let(start = segment[2])
   let(angle = (segment[3] + 4*distanceFromSegmentStart/circlePerimeter) * PI/2)
-  plus(start, multiply(unit_circle_point_clockwise(angle), cornerRadius - weaving))
+  plus(start, multiply(unit_circle_point_clockwise(angle), cornerRadius))
 ;
 
 points_along_rounded_rect = function (
   width,
   height,
   cornerRadius,
-  numberOfPoints,
-  numberBetweenPoints,
-  bulge
+  numberOfPoints
 )
   let(circlePerimeter = perimeter_of_circle(cornerRadius))
   let(totalPerimeter = perimeter_of_rounded_rect(width, height, cornerRadius))
   let(segments = get_segments(width, height, cornerRadius))
   let(distances = get_distances(segments))
-  let(numberOfPoints = numberOfPoints ? numberOfPoints : Math.round(totalPerimeter/3))
-  let(number = numberOfPoints * numberBetweenPoints)
-  let(distanceBetweenPoints = totalPerimeter / number)
+  let(distanceBetweenPoints = totalPerimeter / numberOfPoints)
 
   map(
-    range(number),
+    range(numberOfPoints),
     function (num, i, l)
-      let(n = 2 * numberBetweenPoints)
-      let(c = (i % n) / n * 2 * PI)
-      let(weaving = bulge * cosr(c))
       let(distanceFromStart = i * distanceBetweenPoints)
       let(segmentIndex = find_index(distances, function (distance) distanceFromStart < distance))
       let(segment = segments[segmentIndex])
@@ -77,7 +70,7 @@ points_along_rounded_rect = function (
         : distanceFromStart - distances[segmentIndex-1]
       )
       segmentIndex%2 == 0
-        ? calculate_straight_side(segment, distanceFromSegmentStart, segmentIndex%4 == 0 ? weaving : -weaving)
-        : calculate_corner(segment, distanceFromSegmentStart, cornerRadius, circlePerimeter, weaving)
+        ? calculate_straight_side(segment, distanceFromSegmentStart)
+        : calculate_corner(segment, distanceFromSegmentStart, cornerRadius, circlePerimeter)
   )
 ;

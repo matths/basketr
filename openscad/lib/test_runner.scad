@@ -16,7 +16,9 @@ include <circle.test.scad>
 include <list_fp.test.scad>
 include <list.test.scad>
 include <math.test.scad>
+include <normal_vector.test.scad>
 include <offset_path.test.scad>
+include <sine_wave_path.test.scad>
 include <partial_sums.test.scad>
 include <perimeters.test.scad>
 include <point.test.scad>

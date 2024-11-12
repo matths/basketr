@@ -11,7 +11,7 @@ include <../../lib/points_along_rounded_rect.scad>;
 
 module rods(length = 24, width = 16, corner_radius = 2, number_of_rods = 12, rod_radius = 1, rod_height = 10, z = 0) {
   rod_points = map(
-    points_along_rounded_rect(width, length, corner_radius, number_of_rods, 1, 0),
+    points_along_rounded_rect(width, length, corner_radius, number_of_rods),
     function (p, i, l) minus(p, point(width / 2, length / 2))
   );
   for (rod_point = rod_points)

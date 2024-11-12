@@ -7,6 +7,7 @@
 
 include <../../lib/points_along_rounded_rect.scad>;
 include <../../lib/offset_path.scad>;
+include <../../lib/sine_wave_path.scad>;
 include <../../lib/point.scad>;
 include <../../lib/list_fp.scad>;
 
@@ -14,12 +15,13 @@ module bulged_shape(basket_length, basket_width, corner_radius, num_of_rods, bul
   bulge = (opposite ? 1 : -1) * bulge;
 
   point_list = map(
-    points_along_rounded_rect(basket_width, basket_length, corner_radius, num_of_rods, 24, bulge),
+    points_along_rounded_rect(basket_width, basket_length, corner_radius, num_of_rods * (1 + 24)),
     function (p, i, l) minus(p, point(basket_width / 2, basket_length / 2))
   );
+  point_list_bulged = sine_wave_path(point_list, bulge,num_of_rods/2);
 
-  point_list_outside = offset_path(point_list, thickness/2);
-  point_list_inside = offset_path(point_list, -thickness/2);
+  point_list_outside = offset_path(point_list_bulged, thickness/2);
+  point_list_inside = offset_path(point_list_bulged, -thickness/2);
   
   difference() {
     polygon(point_list_outside);

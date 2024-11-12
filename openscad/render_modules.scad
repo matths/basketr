@@ -11,7 +11,7 @@ use <module/modules_rectangular.scad>
 
 rotate([0,0,90])
 {
-  translate([30,   15, 0]) text("Basketr", font = "Arial", size=6, halign = "center",  $fn = 180);
+  translate([30,  15, 0]) text("Basketr", font = "Arial", size=6, halign = "center",  $fn = 180);
   translate([15,   2, 0]) text("circular", font = "Arial", size=4, halign = "center",  $fn = 180);
   translate([45,   2, 0]) text("rectangular", font = "Arial", size=4, halign = "center",  $fn = 180);
 
